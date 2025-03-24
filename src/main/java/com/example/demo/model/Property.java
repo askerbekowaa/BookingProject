@@ -12,9 +12,9 @@ public class Property {
     private String name;
     private String location;
     private double pricePerNight;
-    private String description; // New field
-    private String amenities;  // New field (e.g., "WiFi, Pool, Parking")
-    private String coverImagePath; // New field to store image path
+    private String description;
+    private String amenities;
+    private String coverImagePath;
 
     @ManyToOne
     private User host;
@@ -22,10 +22,8 @@ public class Property {
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms = new ArrayList<>();
 
-    // Default constructor
     public Property() {}
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }

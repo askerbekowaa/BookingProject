@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Property;
 import com.example.demo.model.Room;
+import com.example.demo.repository.BookingRepository;
 import com.example.demo.repository.PropertyRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class RoomController {
     @Autowired
     private PropertyRepository propertyRepository;
 
+    @Autowired
+    private BookingRepository bookingRepository;
+
     private static final String UPLOAD_DIR = "uploads";
 
     @GetMapping("/add-room/{propertyId}")
@@ -35,18 +39,24 @@ public class RoomController {
         model.addAttribute("propertyId", propertyId);
         return "add-room";
     }
+
     @GetMapping("/delete-room/{roomId}")
-    public String deleteRoom(@PathVariable Long roomId, Authentication authentication) {
+    public String deleteRoom(@PathVariable Long roomId, Authentication authentication, Model model) {
         var room = roomRepository.findById(roomId).orElse(null);
 
         if (room == null || !room.getProperty().getHost().getUsername().equals(authentication.getName())) {
             return "redirect:/error";
         }
 
+        if (!bookingRepository.findByRoomId(roomId).isEmpty()) {
+            model.addAttribute("error", "Нельзя удалить номер, есть активные бронирования.");
+            return "host-dashboard";
+        }
+
         roomRepository.deleteById(roomId);
+
         return "redirect:/host-dashboard";
     }
-
 
     @PostMapping("/add-room/{propertyId}")
     public String addRoom(@PathVariable Long propertyId,

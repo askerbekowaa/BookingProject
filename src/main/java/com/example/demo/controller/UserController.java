@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-
-
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,7 @@ public class UserController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user) {
         userService.registerUser(user);
-        return "redirect:/login"; // Redirect to login after registration
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -32,7 +30,6 @@ public class UserController {
         return "login";
     }
 
-    // API endpoint (optional, for testing)
     @PostMapping("/api/users/register")
     @ResponseBody
     public User registerApi(@RequestBody User user) {

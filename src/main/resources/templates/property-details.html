@@ -2,64 +2,120 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Подробности об отеле</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-                   background-color: #5B2C2C;
-                   color: white;
-               }
-               .property-container {
-                   max-width: 800px;
-                   margin: auto;
-                   padding: 20px;
-                   background: #E5E5E5;
-                   border-radius: 10px;
-                   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-                   color: black;
-               }
-               .property-image {
-                   max-width: 100%;
-                   height: auto;
-                   border-radius: 10px;
-               }
-               .card {
-                   border: none;
-                   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-               }
-               .btn-primary {
-                   background-color: #5B2C2C;
-                   border: none;
-               }
-               .btn-primary:hover {
-                   background-color: #4A1F1F;
-               }
+            background-color: #5B2C2C;
+            color: white;
+        }
+        h1 {
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: black !important; /* Обеспечиваем черный цвет для заголовка */
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .property-container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+            background: #E5E5E5;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            color: black;
+        }
+
+        .property-info {
+            display: flex; /* Flexbox для размещения картинки и текста рядом */
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .property-image {
+            max-width: 350px;
+            height: auto;
+            border-radius: 10px;
+            margin-right: 20px;
+            margin-top: 20px;
+        }
+
+        .property-details {
+            flex: 1;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            text-align: left;
+        }
+
+        .card-body .btn-primary {
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .btn-primary {
+            background-color: #5B2C2C;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #4A1F1F;
+        }
+
+        p {
+            margin-top: 20px;
+        }
+
+        .room-title {
+            margin-top: 20px;
+        }
+        .btn-secondary {
+            background-color: #5B2C2C; /* Задайте цвет фона */
+            color: white; /* Цвет текста */
+            border: none; /* Убираем границу */
+            padding: 10px 20px; /* Добавляем отступы */
+            border-radius: 5px; /* Скругленные углы */
+        }
+
+        .btn-secondary:hover {
+            background-color: #4A1F1F; /* Изменяем цвет при наведении */
+        }
+
     </style>
 </head>
-<body class="bg-light">
+
+<body>
 
 <div class="container mt-5">
     <div class="property-container">
         <h1 class="text-center">Подробности об отеле</h1>
 
         <div th:if="${property}">
-            <h2 th:text="${property.name}" class="text-primary"></h2>
-
-            <div class="text-center">
-                <img th:src="${property.coverImagePath}" alt="Cover Image" class="property-image"
-                     th:unless="${property.coverImagePath == null}" />
+            <div class="property-info">
+                <div>
+                    <img th:src="${property.coverImagePath}" alt="Cover Image" class="property-image"
+                         th:unless="${property.coverImagePath == null}" />
+                </div>
+                <div class="property-details">
+                    <h2 th:text="${property.name}"></h2>
+                    <p><strong>Местонахождение:</strong> <span th:text="${property.location}"></span></p>
+                    <p><strong>Цена за ночь:</strong> <span th:text="'$' + ${property.pricePerNight}"></span></p>
+                    <p><strong>Описание:</strong> <span th:text="${property.description}"></span></p>
+                    <p><strong>Удобства:</strong> <span th:text="${property.amenities}"></span></p>
+                    <p><strong>Организовано:</strong> <span th:text="${property.host.username}"></span></p>
+                </div>
             </div>
 
-            <p><strong>Местонахождение:</strong> <span th:text="${property.location}"></span></p>
-            <p><strong>Цена за ночь:</strong> <span th:text="'$' + ${property.pricePerNight}"></span></p>
-            <p><strong>Описание:</strong> <span th:text="${property.description}"
-                                                   th:unless="${property.description == null}"></span></p>
-            <p><strong>Удобства:</strong> <span th:text="${property.amenities}"
-                                                 th:unless="${property.amenities == null}"></span></p>
-            <p><strong>Организовано:</strong> <span th:text="${property.host.username}"></span></p>
-
-            <!-- Добавляем таблицу с номерами -->
-            <h3 class="mt-4">Номера в отели</h3>
+            <h3 class="mt-4">Номера в отеле</h3>
             <div class="row">
                 <div class="col-md-4" th:each="room : ${property.rooms}">
                     <div class="card">
@@ -71,25 +127,26 @@
                                 <strong>Удобства:</strong> <span th:text="${room.amenities}"></span><br>
                                 <strong>Цена:</strong> <span th:text="'$' + ${room.pricePerNight} + '/ за ночь'"></span>
                             </p>
-                            <a th:href="@{'/book-room/' + ${room.id}}" class="btn btn-primary">Забронировать сейчас</a>
-
+                            <a th:href="@{'/book-room/' + ${room.id}}" class="btn btn-primary ">Забронировать сейчас</a>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <div th:unless="${property.rooms != null and property.rooms.size() > 0}">
+                <p>Номера в отеле еще не добавлены.</p>
+            </div>
+
+        </div>
 
         <div th:unless="${property}">
-            <p class="text-danger">Property not found.</p>
-            <a href="/" class="btn btn-secondary">Назад на главную</a>
+            <p class="text-danger">Отель не найден.</p>
         </div>
-        </div>
-    </div>
-</div>
+
+        <a href="/" class="btn btn-secondary mt-4">Назад на главную</a>
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

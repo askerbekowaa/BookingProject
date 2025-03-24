@@ -47,7 +47,7 @@ public class BookingController {
         booking.setProperty(property);
 
         if (booking.getCheckInDate().isAfter(booking.getCheckOutDate())) {
-            model.addAttribute("error", "Check-out date must be after check-in date.");
+            model.addAttribute("error", "Дата выезда должна быть позже даты заезда.");
             model.addAttribute("property", property);
             return "book-property";
         }

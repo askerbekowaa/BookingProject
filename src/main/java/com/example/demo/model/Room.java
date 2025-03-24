@@ -8,8 +8,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String type; // Люкс, Стандарт, Семейный
-    private String amenities; // Удобства
+    private String type;
+    private String amenities;
     private double pricePerNight;
     private String imagePath;
 
@@ -27,7 +27,6 @@ public class Room {
         this.property = property;
     }
 
-    // Геттеры и сеттеры
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

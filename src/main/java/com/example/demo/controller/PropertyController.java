@@ -1,14 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Property;
-import com.example.demo.model.User;
 import com.example.demo.model.Room;
+import com.example.demo.model.User;
+import com.example.demo.repository.BookingRepository;
 import com.example.demo.repository.PropertyRepository;
 import com.example.demo.repository.RoomRepository;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,18 +30,17 @@ public class PropertyController {
     @Autowired
     private RoomRepository roomRepository;
 
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @Autowired
     private UserService userService;
-
-
 
     private static final String UPLOAD_DIR = "uploads";
 
     @GetMapping("/")
     public String home(Model model) {
-        Pageable topTen = PageRequest.of(0, 10);
-        List<Property> properties = propertyRepository.findAll(topTen).getContent();
+        List<Property> properties = propertyRepository.findAll();
         model.addAttribute("properties", properties);
         return "index";
     }
@@ -69,14 +67,14 @@ public class PropertyController {
             String username = authentication.getName();
             User host = userService.findByUsername(username);
             if (host == null) {
-                throw new RuntimeException("Host not found for username: " + username);
+                throw new RuntimeException("Не найдено владельца с именем: " + username);
             }
             property.setHost(host);
 
             if (!coverImage.isEmpty()) {
                 String contentType = coverImage.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
-                    model.addAttribute("error", "Please upload an image file.");
+                    model.addAttribute("error", "Пожалуйста, загрузите изображение.");
                     return "add-property";
                 }
 
@@ -95,10 +93,10 @@ public class PropertyController {
             propertyRepository.save(property);
             return "redirect:/";
         } catch (IOException e) {
-            model.addAttribute("error", "Failed to upload image: " + e.getMessage());
+            model.addAttribute("error", "Не удалось загрузить изображение: " + e.getMessage());
             return "add-property";
         } catch (Exception e) {
-            model.addAttribute("error", "Failed to add property: " + e.getMessage());
+            model.addAttribute("error", "Не удалось добавить отель: " + e.getMessage());
             return "add-property";
         }
     }
@@ -123,17 +121,23 @@ public class PropertyController {
     }
 
     @GetMapping("/delete-property/{propertyId}")
-    public String deleteProperty(@PathVariable Long propertyId, Authentication authentication) {
+    public String deleteProperty(@PathVariable Long propertyId, Authentication authentication, Model model) {
         var property = propertyRepository.findById(propertyId).orElse(null);
 
         if (property == null || !property.getHost().getUsername().equals(authentication.getName())) {
             return "redirect:/error";
         }
 
-        // Удаляем сначала все номера отеля
-        roomRepository.deleteAll(roomRepository.findByPropertyId(propertyId));
+        List<Room> rooms = roomRepository.findByPropertyId(propertyId);
+        for (Room room : rooms) {
+            if (!bookingRepository.findByRoomId(room.getId()).isEmpty()) {
+                model.addAttribute("error", "Нельзя удалить отель, есть активные бронирования.");
+                return "host-dashboard";
+            }
+        }
 
-        // Удаляем сам отель
+        roomRepository.deleteAll(rooms);
+
         propertyRepository.deleteById(propertyId);
 
         return "redirect:/host-dashboard";

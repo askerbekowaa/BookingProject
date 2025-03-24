@@ -18,7 +18,7 @@ public class Booking {
     private Property property;
 
     @ManyToOne
-    @JoinColumn(name = "room_id") // Добавляем связь с Room
+    @JoinColumn(name = "room_id")
     private Room room;
 
     private LocalDate checkInDate;
@@ -27,7 +27,6 @@ public class Booking {
 
     public Booking() {}
 
-    // Геттеры и сеттеры
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

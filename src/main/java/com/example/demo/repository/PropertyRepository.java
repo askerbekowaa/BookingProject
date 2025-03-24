@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<Property> findByHostUsername(String username);
-    List<Property> findByLocationContaining(String location); // Добавь этот метод
+    List<Property> findByLocationContaining(String location);
 }

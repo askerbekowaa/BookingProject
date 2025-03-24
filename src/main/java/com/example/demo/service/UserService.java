@@ -18,7 +18,6 @@ public class UserService {
 
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Role can be set via form or default to GUEST
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole("GUEST");
         }

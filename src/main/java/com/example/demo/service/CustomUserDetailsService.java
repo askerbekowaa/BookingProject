@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singletonList(() -> "ROLE_" + user.getRole()) // Prefix with ROLE_
+                Collections.singletonList(() -> "ROLE_" + user.getRole())
         );
     }
 }
