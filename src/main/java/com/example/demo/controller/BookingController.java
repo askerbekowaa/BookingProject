@@ -28,23 +28,6 @@ public class BookingController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/book/{propertyId}")
-    public String showBookingForm(@PathVariable Long propertyId, Model model, Authentication authentication) {
-        Property property = propertyRepository.findById(propertyId).orElse(null);
-        if (property == null) {
-            return "redirect:/error";
-        }
-
-        model.addAttribute("property", property);
-        model.addAttribute("booking", new Booking());
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            model.addAttribute("requiresLogin", true);
-        }
-
-        return "book-property";
-    }
-
     @PostMapping("/book/{propertyId}")
     public String submitBooking(@PathVariable Long propertyId,
                                 @ModelAttribute Booking booking,

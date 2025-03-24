@@ -31,8 +31,11 @@ public class PropertyController {
     @Autowired
     private RoomRepository roomRepository;
 
+
     @Autowired
     private UserService userService;
+
+
 
     private static final String UPLOAD_DIR = "uploads";
 
