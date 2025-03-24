@@ -1,4 +1,7 @@
-HELP.md
+# Ignoring application.properties
+src/main/resources/*.properties
+
+# Other rules (already included in your example)
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
